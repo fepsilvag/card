@@ -4,6 +4,6 @@ import com.hyperativa.card.domain.domain.CardEntity;
 
 public interface SaveCardPort {
 
-    CardEntity execute(CardEntity cardEntity);
+    CardEntity execute(CardEntity entity);
 
 }

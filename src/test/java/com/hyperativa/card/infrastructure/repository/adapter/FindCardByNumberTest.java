@@ -25,15 +25,15 @@ class FindCardByNumberTest {
     @DisplayName("Execute should find card by number")
     void execute_shouldFindCardByNumber() {
         // Given
-        CardEntity cardEntity = CardEntity.builder()
+        CardEntity entity = CardEntity.builder()
                 .cardNumber("1234567890123456")
                 .build();
 
         // When
-        when(cardRepository.findByCardNumber(cardEntity.getCardNumber())).thenReturn(cardEntity);
+        when(cardRepository.findByCardNumber(entity.getCardNumber())).thenReturn(entity);
 
         // Then
-        assertEquals(cardEntity, findCardByNumberAdapter.execute(cardEntity.getCardNumber()));
+        assertEquals(entity, findCardByNumberAdapter.execute(entity.getCardNumber()));
     }
 
 }

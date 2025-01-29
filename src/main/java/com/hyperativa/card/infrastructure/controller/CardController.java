@@ -2,6 +2,7 @@ package com.hyperativa.card.infrastructure.controller;
 
 import com.hyperativa.card.application.dto.CardInbound;
 import com.hyperativa.card.application.dto.CardOutbound;
+import com.hyperativa.card.domain.exception.CardDoesNotExistException;
 import com.hyperativa.card.domain.port.in.CreateCardPort;
 import com.hyperativa.card.domain.port.in.SearchCardPort;
 import com.hyperativa.card.infrastructure.controller.mapper.CardRepresentationMapper;
@@ -15,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @Log4j2
 @RestController
 @RequiredArgsConstructor
@@ -26,20 +29,24 @@ public class CardController implements CardsApi {
 
     @Override
     public ResponseEntity<CardResponseRepresentation> createCard(CardRequestRepresentation createCardRequestRepresentation) {
-        log.info("Received request to create card: " + createCardRequestRepresentation);
-        CardInbound cardInbound = cardRepresentationMapper.toInbound(createCardRequestRepresentation);
-        CardOutbound CardOutbound = createCardPort.execute(cardInbound);
+        log.info("Received request to create card: {}", createCardRequestRepresentation);
+        CardInbound inbound = cardRepresentationMapper.toInbound(createCardRequestRepresentation);
+        CardOutbound outbound = createCardPort.execute(inbound);
+        CardResponseRepresentation representation = cardRepresentationMapper.toRepresentation(outbound);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(cardRepresentationMapper.toRepresentation(CardOutbound));
+        log.info("Returning response of created card: {}", representation);
+        return ResponseEntity.status(HttpStatus.CREATED).body(representation);
     }
 
     @Override
     public ResponseEntity<CardIdResponseRepresentation> searchCard(String cardNumber) {
-        log.info("Received request to search card: " + cardNumber);
-        CardOutbound cardOutbound = searchCardPort.execute(cardNumber);
+        log.info("Received request to search card: {}", cardNumber);
+        CardIdResponseRepresentation representation = Optional.ofNullable(searchCardPort.execute(cardNumber))
+                .map(cardRepresentationMapper::toIdRepresentation)
+                .orElseThrow(CardDoesNotExistException::new);
 
-        return ResponseEntity.ok(cardRepresentationMapper.toIdRepresentation(cardOutbound));
+        log.info("Returning response of searched card: {}", representation);
+        return ResponseEntity.ok(representation);
     }
 
 }

@@ -22,10 +22,10 @@ public class SearchCardUseCase implements SearchCardPort {
     @Override
     public CardOutbound execute(String cardNumber) {
         log.info("Searching card by number: {}", cardNumber);
-        CardEntity cardEntity = findCardByNumberPort.execute(cardNumber);
+        CardEntity entity = findCardByNumberPort.execute(cardNumber);
 
-        log.info("Card found: {}", cardEntity);
-        return cardEntityMapper.toOutbound(cardEntity);
+        log.info("Card found: {}", entity);
+        return cardEntityMapper.toOutbound(entity);
     }
 
 }

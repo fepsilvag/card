@@ -13,8 +13,8 @@ public class SaveCardAdapter implements SaveCardPort {
     private final CardRepository cardRepository;
 
     @Override
-    public CardEntity execute(CardEntity cardEntity) {
-        return cardRepository.save(cardEntity);
+    public CardEntity execute(CardEntity entity) {
+        return cardRepository.save(entity);
     }
 
 }

@@ -24,20 +24,20 @@ public class CreateCardUseCase implements CreateCardPort {
     private final CardEntityMapper cardEntityMapper;
 
     @Override
-    public CardOutbound execute(@Valid CardInbound cardInbound) {
-        CardEntity cardEntity = cardEntityMapper.toEntity(cardInbound);
-        cardEntity = save(cardEntity);
+    public CardOutbound execute(@Valid CardInbound inbound) {
+        CardEntity entity = cardEntityMapper.toEntity(inbound);
+        entity = save(entity);
 
-        log.info("Card created: {}", cardEntity);
-        return cardEntityMapper.toOutbound(cardEntity);
+        log.info("Card created: {}", entity);
+        return cardEntityMapper.toOutbound(entity);
     }
 
-    private CardEntity save(CardEntity cardEntity) {
+    private CardEntity save(CardEntity entity) {
         try {
-            log.info("Creating card: {}", cardEntity);
-            return cardEntity = saveCardPort.execute(cardEntity);
+            log.info("Creating card: {}", entity);
+            return entity = saveCardPort.execute(entity);
         } catch (DataIntegrityViolationException e) {
-            log.warn("Card number already in use: {}", cardEntity.getCardNumber());
+            log.warn("Card number already in use: {}", entity.getCardNumber());
             throw new CardNumberDuplicatedException();
         }
     }

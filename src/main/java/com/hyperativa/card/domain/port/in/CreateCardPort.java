@@ -6,6 +6,6 @@ import jakarta.validation.Valid;
 
 public interface CreateCardPort {
 
-    CardOutbound execute(@Valid CardInbound cardInbound);
+    CardOutbound execute(@Valid CardInbound inbound);
 
 }
