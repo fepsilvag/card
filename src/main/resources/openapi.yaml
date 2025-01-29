@@ -5,7 +5,7 @@ info:
   version: 1.0.0
 
 servers:
-  - url: https://api.hyperativa.com/v1
+  - url: https://localhost:8080/api
 
 security:
   - OAuth2:
@@ -89,42 +89,6 @@ paths:
                 $ref: '#/components/schemas/CardResponse'
         '400':
           description: Dados inválidos
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Não autorizado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
-    get:
-      summary: Consultar número de cartão
-      description: Consulta se um número de cartão existe na base de dados.
-      operationId: searchCard
-      tags:
-        - Cartões
-      security:
-        - OAuth2:
-            - read
-      parameters:
-        - name: cardNumber
-          in: query
-          required: true
-          schema:
-            type: string
-          description: Número completo do cartão
-      responses:
-        '200':
-          description: Cartão encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CardResponse'
-        '404':
-          description: Cartão não encontrado
           content:
             application/json:
               schema:
