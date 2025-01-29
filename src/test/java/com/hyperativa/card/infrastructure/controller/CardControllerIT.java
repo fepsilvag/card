@@ -97,6 +97,15 @@ class CardControllerIT implements CardsApi {
                 .andExpect(jsonPath("$.id", not(cardResponseRepresentation1.getId())));
     }
 
+    @Test
+    @Order(4)
+    void whenFind_shouldReturnNotFound() throws Exception {
+        // Then
+        searchCard(mockMvc, "aa")
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(ErrorCodeEnum.CAR002.toString()));
+    }
+
     static ResultActions createCard(
             MockMvc mockMvc,
             CardRequestRepresentation cardRequestRepresentation

@@ -7,7 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCodeEnum {
 
-    CAR001("The card number is already in use");
+    CAR001("The card number is already in use"),
+    CAR002("The card number does not exist");
 
     private final String description;
 

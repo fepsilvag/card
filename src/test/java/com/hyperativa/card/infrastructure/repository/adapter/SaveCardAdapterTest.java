@@ -25,15 +25,15 @@ class SaveCardAdapterTest {
     @DisplayName("Execute should save card")
     void execute_shouldSaveCard() {
         // Given
-        CardEntity cardEntity = CardEntity.builder()
+        CardEntity entity = CardEntity.builder()
                 .cardNumber("1234567890123456")
                 .build();
 
         // When
-        when(cardRepository.save(cardEntity)).thenReturn(cardEntity);
+        when(cardRepository.save(entity)).thenReturn(entity);
 
         // Then
-        assertEquals(cardEntity, saveCardAdapter.execute(cardEntity));
+        assertEquals(entity, saveCardAdapter.execute(entity));
     }
 
 }

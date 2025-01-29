@@ -30,20 +30,20 @@ class SearchCardUseCaseTest {
     @DisplayName("Execute should search card")
     void execute_shouldSearchCard() {
         // Given
-        CardEntity cardEntity = CardEntity.builder()
+        CardEntity entity = CardEntity.builder()
                 .cardNumber("1234567890123456")
                 .build();
 
-        CardOutbound cardOutbound = CardOutbound.builder()
-                .cardNumber(cardEntity.getCardNumber())
+        CardOutbound outbound = CardOutbound.builder()
+                .cardNumber(entity.getCardNumber())
                 .build();
 
         // When
-        when(findCardByNumberPort.execute(cardEntity.getCardNumber())).thenReturn(cardEntity);
-        when(cardEntityMapper.toOutbound(cardEntity)).thenReturn(cardOutbound);
+        when(findCardByNumberPort.execute(entity.getCardNumber())).thenReturn(entity);
+        when(cardEntityMapper.toOutbound(entity)).thenReturn(outbound);
 
         // Then
-        assertEquals(cardOutbound, searchCardUseCase.execute(cardEntity.getCardNumber()));
+        assertEquals(outbound, searchCardUseCase.execute(entity.getCardNumber()));
     }
 
 }

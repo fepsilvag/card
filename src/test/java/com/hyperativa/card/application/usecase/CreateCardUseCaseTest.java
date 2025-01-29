@@ -31,25 +31,25 @@ class CreateCardUseCaseTest {
     @DisplayName("Execute should create card")
     void execute_shouldCreateCard() {
         // Given
-        CardInbound cardInbound = CardInbound.builder()
+        CardInbound inbound = CardInbound.builder()
                 .cardNumber("1234567890123456")
                 .build();
 
-        CardEntity cardEntity = CardEntity.builder()
-                .cardNumber(cardInbound.getCardNumber())
+        CardEntity entity = CardEntity.builder()
+                .cardNumber(inbound.getCardNumber())
                 .build();
 
-        CardOutbound cardOutbound = CardOutbound.builder()
-                .cardNumber(cardInbound.getCardNumber())
+        CardOutbound outbound = CardOutbound.builder()
+                .cardNumber(inbound.getCardNumber())
                 .build();
 
         // When
-        when(cardEntityMapper.toEntity(cardInbound)).thenReturn(cardEntity);
-        when(saveCardPort.execute(cardEntity)).thenReturn(cardEntity);
-        when(cardEntityMapper.toOutbound(cardEntity)).thenReturn(cardOutbound);
+        when(cardEntityMapper.toEntity(inbound)).thenReturn(entity);
+        when(saveCardPort.execute(entity)).thenReturn(entity);
+        when(cardEntityMapper.toOutbound(entity)).thenReturn(outbound);
 
         // Then
-        assertEquals(cardOutbound, createCardUseCase.execute(cardInbound));
+        assertEquals(outbound, createCardUseCase.execute(inbound));
     }
 
 }
