@@ -100,6 +100,42 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+    get:
+      summary: Consultar número de cartão
+      description: Consulta se um número de cartão existe na base de dados.
+      operationId: searchCard
+      tags:
+        - Cartões
+      security:
+        - OAuth2:
+            - read
+      parameters:
+        - name: cardNumber
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Número completo do cartão
+      responses:
+        '200':
+          description: Cartão encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardIdResponse'
+        '404':
+          description: Cartão não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
 components:
   schemas:
     CardRequest:
@@ -121,8 +157,14 @@ components:
         cardNumber:
           type: string
           description: Número completo do cartão
-      required:
-        - cardNumber
+
+    CardIdResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identificador único do cartão
 
     ErrorResponse:
       type: object
