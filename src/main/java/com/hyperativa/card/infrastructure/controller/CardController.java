@@ -10,12 +10,12 @@ import com.hyperativa.representation.CardIdResponseRepresentation;
 import com.hyperativa.representation.CardRequestRepresentation;
 import com.hyperativa.representation.CardResponseRepresentation;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-@Log
+@Log4j2
 @RestController
 @RequiredArgsConstructor
 public class CardController implements CardsApi {

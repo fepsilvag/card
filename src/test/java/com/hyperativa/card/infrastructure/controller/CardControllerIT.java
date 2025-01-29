@@ -1,5 +1,6 @@
 package com.hyperativa.card.infrastructure.controller;
 
+import com.hyperativa.card.domain.constants.ErrorCodeEnum;
 import com.hyperativa.card.infrastructure.controller.util.IntegrationTestUtil;
 import com.hyperativa.openapi.api.CardsApi;
 import com.hyperativa.representation.CardRequestRepresentation;
@@ -64,7 +65,26 @@ class CardControllerIT implements CardsApi {
 
     @Test
     @Order(2)
-    void whenFind_shouldReturnSavedConfig() throws Exception {
+    void createCard_shouldReturnConflict() throws Exception {
+        CardRequestRepresentation cardRequestRepresentation1 = new CardRequestRepresentation(
+                cardResponseRepresentation1.getCardNumber());
+
+        CardRequestRepresentation cardRequestRepresentation2 = new CardRequestRepresentation(
+                cardResponseRepresentation2.getCardNumber());
+
+        // Then
+        createCard(mockMvc, cardRequestRepresentation1)
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value(ErrorCodeEnum.CAR001.toString()));
+
+        createCard(mockMvc, cardRequestRepresentation2)
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value(ErrorCodeEnum.CAR001.toString()));
+    }
+
+    @Test
+    @Order(3)
+    void whenFind_shouldReturnSavedCard() throws Exception {
         // Then
         searchCard(mockMvc, cardResponseRepresentation1.getCardNumber())
                 .andExpect(status().isOk())
@@ -77,7 +97,10 @@ class CardControllerIT implements CardsApi {
                 .andExpect(jsonPath("$.id", not(cardResponseRepresentation1.getId())));
     }
 
-    static ResultActions createCard(MockMvc mockMvc, CardRequestRepresentation cardRequestRepresentation) throws Exception {
+    static ResultActions createCard(
+            MockMvc mockMvc,
+            CardRequestRepresentation cardRequestRepresentation
+    ) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
                 .post("/cards")
                 .contentType(MediaType.APPLICATION_JSON)

@@ -21,7 +21,7 @@ public class CardEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(name = "CARD_NUMBER", nullable = false)
+    @Column(name = "CARD_NUMBER", nullable = false, unique = true)
     private String cardNumber;
 
 }
