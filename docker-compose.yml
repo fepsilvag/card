@@ -13,5 +13,26 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: card_keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: localhost
+    ports:
+      - "8181:8080"
+    volumes:
+      - ./docker/keycloak-config.json:/opt/keycloak/data/import/keycloak-config.json
+    command:
+      - start-dev
+      - --import-realm
+    networks:
+      - keycloak-network
+
 volumes:
   postgres_data:
+
+networks:
+  keycloak-network:
+    driver: bridge
