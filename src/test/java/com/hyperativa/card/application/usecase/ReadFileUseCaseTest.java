@@ -34,23 +34,20 @@ class ReadFileUseCaseTest {
     @DisplayName("Execute should process file")
     void execute_shouldProcessFile() throws Exception {
         // Given
-        String content = "a;b\nc;d";
+        String content = "a\nb";
         InputStream inputStream = new ByteArrayInputStream(content.getBytes());
 
         // When
         when(fileReaderProperty.getBatchSize()).thenReturn(10);
-        when(fileReaderProperty.getDelimiterCharacter()).thenReturn(";");
         when(file.getInputStream()).thenReturn(inputStream);
         when(file.getOriginalFilename()).thenReturn("testfile.txt");
 
         // Then
-        List<String[]> result = readFileUseCase.execute(file);
+        List<String> result = readFileUseCase.execute(file);
 
         assertEquals(2, result.size());
-        assertEquals("a", result.get(0)[0]);
-        assertEquals("b", result.get(0)[1]);
-        assertEquals("c", result.get(1)[0]);
-        assertEquals("d", result.get(1)[1]);
+        assertEquals("a", result.get(0));
+        assertEquals("b", result.get(1));
 
         verify(file, times(1)).getInputStream();
     }

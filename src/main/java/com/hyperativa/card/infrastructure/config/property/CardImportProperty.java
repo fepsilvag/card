@@ -6,9 +6,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "file-reader")
-public class FileReaderProperty {
+@ConfigurationProperties(prefix = "card-import")
+public class CardImportProperty {
 
-    private Integer batchSize;
+    private CardImportRangeProperty lineIdentification;
+    private CardImportRangeProperty batchNumber;
+    private CardImportRangeProperty cardNumber;
 
 }

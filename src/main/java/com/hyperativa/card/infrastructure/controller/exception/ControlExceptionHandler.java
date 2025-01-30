@@ -17,7 +17,13 @@ public class ControlExceptionHandler {
     private final ErrorRepresentationMapper errorRepresentationMapper;
 
     // Errors 4XX
-    @ExceptionHandler({ EmptyRowException.class, CardNumberMandatoryException.class})
+    @ExceptionHandler({
+            EmptyRowException.class,
+            CardNumberEmptyException.class,
+            BatchNumberEmptyException.class,
+            BatchNumberInvalidException.class,
+            LineIdentificationEmptyException.class
+    })
     public ResponseEntity<Object> handleBadRequest(BusinessException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(errorRepresentationMapper.toRepresentation(exception));
