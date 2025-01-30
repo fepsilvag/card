@@ -1,16 +1,15 @@
 package com.hyperativa.card.infrastructure.controller.exception;
 
-import com.hyperativa.card.domain.exception.CardDoesNotExistException;
-import com.hyperativa.card.domain.exception.CardNumberDuplicatedException;
+import com.hyperativa.card.domain.exception.*;
 import com.hyperativa.card.infrastructure.controller.mapper.ErrorRepresentationMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-@Log4j2
+@Slf4j
 @ControllerAdvice
 @RequiredArgsConstructor
 public class ControlExceptionHandler {
@@ -18,14 +17,20 @@ public class ControlExceptionHandler {
     private final ErrorRepresentationMapper errorRepresentationMapper;
 
     // Errors 4XX
+    @ExceptionHandler({ EmptyRowException.class, CardNumberMandatoryException.class})
+    public ResponseEntity<Object> handleBadRequest(BusinessException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(errorRepresentationMapper.toRepresentation(exception));
+    }
+
     @ExceptionHandler({ CardDoesNotExistException.class })
-    public ResponseEntity<Object> handle(CardDoesNotExistException exception) {
+    public ResponseEntity<Object> handleNotFound(BusinessException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(errorRepresentationMapper.toRepresentation(exception));
     }
 
     @ExceptionHandler({ CardNumberDuplicatedException.class })
-    public ResponseEntity<Object> handle(CardNumberDuplicatedException exception) {
+    public ResponseEntity<Object> handleConflict(BusinessException exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(errorRepresentationMapper.toRepresentation(exception));
     }

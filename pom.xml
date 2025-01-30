@@ -275,6 +275,7 @@
 						<exclude>**/config/**</exclude>
 						<exclude>**/mapper/**</exclude>
 						<exclude>**/openapi/**</exclude>
+						<exclude>**/exception/**</exclude>
 						<exclude>**/representation/**</exclude>
 
 						<exclude>**/*Controller.*</exclude>
