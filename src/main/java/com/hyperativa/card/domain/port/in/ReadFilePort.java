@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface ReadFilePort {
 
-    List<String[]> execute(MultipartFile file);
+    List<String> execute(MultipartFile file);
 
 }

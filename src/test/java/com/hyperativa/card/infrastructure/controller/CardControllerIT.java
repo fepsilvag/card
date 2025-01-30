@@ -88,7 +88,7 @@ class CardControllerIT implements CardsApi {
     @DisplayName("When upload cards in path /cards/upload should return created")
     void uploadCards_shouldReturnCreated() throws Exception {
         // Given
-        String cardNumbers = "5714881935140055\n1541984119621714";
+        String cardNumbers = "C2     4456897999999999\nC1     4456897922969999";
         MockMultipartFile file = new MockMultipartFile("file", "cards.txt",
                 "text/txt", cardNumbers.getBytes());
 
@@ -102,33 +102,43 @@ class CardControllerIT implements CardsApi {
     @DisplayName("When upload cards in path /cards/upload should return bad request")
     void uploadCards_shouldReturnBadRequest() throws Exception {
         // Given
-        String cardNumbers = "\n1541984119621714";
-        MockMultipartFile file = new MockMultipartFile("file", "cards.txt",
-                "text/txt", cardNumbers.getBytes());
+        String contentEmptyCardNumber = "C2      ";
+        String contentEmptyBatch = "C      4456897999999999";
+        String contentInvalidBatch = "CC      4456897999999999";
+        String contentEmptyIdentification = " 2      4456897999999999";
+
+        MockMultipartFile file1 = new MockMultipartFile("file", "cards.txt",
+                "text/txt", contentEmptyIdentification.getBytes());
+
+        MockMultipartFile file2 = new MockMultipartFile("file", "cards.txt",
+                "text/txt", contentEmptyBatch.getBytes());
+
+        MockMultipartFile file3 = new MockMultipartFile("file", "cards.txt",
+                "text/txt", contentInvalidBatch.getBytes());
+
+        MockMultipartFile file4 = new MockMultipartFile("file", "cards.txt",
+                "text/txt", contentEmptyCardNumber.getBytes());
 
         // Then
-        uploadCards(mockMvc, file)
+        uploadCards(mockMvc, file1)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(ErrorCodeEnum.CAR005.toString()));
+
+        uploadCards(mockMvc, file2)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(ErrorCodeEnum.CAR006.toString()));
+
+        uploadCards(mockMvc, file3)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(ErrorCodeEnum.CAR007.toString()));
+
+        uploadCards(mockMvc, file4)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(ErrorCodeEnum.CAR008.toString()));
     }
 
     @Test
-    @Order(4)
-    @DisplayName("When upload cards in path /cards/upload should return conflict")
-    void uploadCards_shouldReturnConflict() throws Exception {
-        // Given
-        String cardNumbers = "1841521415416714\n1841521415416714";
-        MockMultipartFile file = new MockMultipartFile("file", "cards.txt",
-                "text/txt", cardNumbers.getBytes());
-
-        // Then
-        uploadCards(mockMvc, file)
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.code").value(ErrorCodeEnum.CAR001.toString()));
-    }
-
-    @Test
-    @Order(6)
+    @Order(5)
     @DisplayName("When find card in path /cards should return ok")
     void whenFind_shouldReturnSavedCard() throws Exception {
         // Then
@@ -144,7 +154,7 @@ class CardControllerIT implements CardsApi {
     }
 
     @Test
-    @Order(7)
+    @Order(6)
     @DisplayName("When find card in path /cards should return not found")
     void whenFind_shouldReturnNotFound() throws Exception {
         // Then
