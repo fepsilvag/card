@@ -1,0 +1,248 @@
+openapi: 3.0.0
+info:
+  title: API de Gerenciamento de Cartões
+  description: API para cadastro e consulta de números de cartão com autenticação OAuth2.
+  version: 1.0.0
+
+servers:
+  - url: https://localhost:8080/api
+
+security:
+  - OAuth2:
+      - read
+      - write
+
+paths:
+  /oauth/token:
+    post:
+      summary: Autenticação do usuário
+      description: Endpoint para autenticação OAuth2 e obtenção do token JWT.
+      tags:
+        - Autenticação
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                grant_type:
+                  type: string
+                  default: "password"
+                username:
+                  type: string
+                password:
+                  type: string
+                client_id:
+                  type: string
+                client_secret:
+                  type: string
+              required:
+                - grant_type
+                - username
+                - password
+                - client_id
+                - client_secret
+      responses:
+        '200':
+          description: Token gerado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                  expires_in:
+                    type: integer
+        '401':
+          description: Credenciais inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /cards:
+    post:
+      summary: Inserir número de cartão
+      description: Insere um número de cartão na base de dados.
+      operationId: createCard
+      tags:
+        - Cartões
+      security:
+        - OAuth2:
+            - write
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardRequest'
+      responses:
+        '201':
+          description: Cartão inserido com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        '400':
+          description: Dados inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Cartão já cadastrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    get:
+      summary: Consultar número de cartão
+      description: Consulta se um número de cartão existe na base de dados.
+      operationId: searchCard
+      tags:
+        - Cartões
+      security:
+        - OAuth2:
+            - read
+      parameters:
+        - name: cardNumber
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Número completo do cartão
+      responses:
+        '200':
+          description: Cartão encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardIdResponse'
+        '404':
+          description: Cartão não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /cards/upload:
+    post:
+      summary: Upload de arquivo TXT com números de cartão
+      description: Endpoint para enviar um arquivo TXT contendo números de cartão para cadastro em lote.
+      operationId: uploadCards
+      tags:
+        - Cartões
+      security:
+        - OAuth2:
+            - write
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Arquivo TXT contendo números de cartão (um por linha)
+      responses:
+        '200':
+          description: Arquivo processado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Arquivo processado com sucesso"
+                  totalCardsProcessed:
+                    type: integer
+                    example: 10
+        '400':
+          description: Arquivo inválido ou vazio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Erro interno ao processar o arquivo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    CardRequest:
+      type: object
+      properties:
+        cardNumber:
+          type: string
+          description: Número completo do cartão
+      required:
+        - cardNumber
+
+    CardResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identificador único do cartão
+        cardNumber:
+          type: string
+          description: Número completo do cartão
+
+    CardIdResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identificador único do cartão
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Código de erro
+        message:
+          type: string
+          description: Mensagem de erro
+
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.hyperativa.com/oauth/authorize
+          tokenUrl: https://api.hyperativa.com/oauth/token
+          scopes:
+            read: Permissão para consultar dados
+            write: Permissão para inserir dados

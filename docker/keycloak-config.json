@@ -1,0 +1,36 @@
+{
+  "enabled": true,
+  "realm": "hyperativa-realm",
+  "clients": [
+    {
+      "enabled": true,
+      "publicClient": false,
+      "secret": "card-secret",
+      "clientId": "card-client",
+      "protocol": "openid-connect",
+      "serviceAccountsEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "authorizationServicesEnabled": true,
+      "webOrigins": ["http://localhost:8080"],
+      "clientAuthenticatorType": "client-secret",
+      "redirectUris": ["http://localhost:8080/*"]
+    }
+  ],
+  "users": [
+    {
+      "enabled": true,
+      "username": "fernando",
+      "realmRoles": ["user"],
+      "firstName": "Fernando",
+      "lastName": "Pereira da Silva",
+      "email": "fepsilva.g@gmail.com",
+      "credentials": [
+        {
+          "type": "password",
+          "temporary": false,
+          "value": "minhasenha"
+        }
+      ]
+    }
+  ]
+}
