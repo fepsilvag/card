@@ -1,0 +1,291 @@
+{
+	"info": {
+		"_postman_id": "71d61196-5006-4d9a-a428-1ec4847ea0d9",
+		"name": "Card",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13603356"
+	},
+	"item": [
+		{
+			"name": "Get Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function main() {\r",
+							"    setAcessToken();\r",
+							"}\r",
+							"\r",
+							"function setAcessToken() {\r",
+							"    pm.collectionVariables.set(\"acessToken\", JSON.parse(responseBody).access_token);\r",
+							"}\r",
+							"\r",
+							"main();"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{keycloakUsername}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{keycloakPassword}}",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{clientId}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{clientSecret}}",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "openid",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{keycloakUrl}}/realms/{{keycloakRealm}}/protocol/openid-connect/token",
+					"host": [
+						"{{keycloakUrl}}"
+					],
+					"path": [
+						"realms",
+						"{{keycloakRealm}}",
+						"protocol",
+						"openid-connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Card",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{acessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"cardNumber\": \"1234567890123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/cards",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"cards"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Card By File",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{acessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/Pessoal/Documents/Programação/card/doc/import-success-example.txt"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/cards/upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"cards",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Card",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{acessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/cards?cardNumber=1234567890123456",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"cards"
+					],
+					"query": [
+						{
+							"key": "cardNumber",
+							"value": "1234567890123456"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"function main() {\r",
+					"    setAcessToken();\r",
+					"}\r",
+					"\r",
+					"function setAcessToken() {\r",
+					"    var keycloakUrl = pm.environment.get(\"keycloakUrl\");\r",
+					"    var clientId = pm.collectionVariables.get(\"clientId\");\r",
+					"    var clientSecret = pm.collectionVariables.get(\"clientSecret\");\r",
+					"    var keycloakUsername = pm.environment.get(\"keycloakUsername\");\r",
+					"    var keycloakPassword = pm.environment.get(\"keycloakPassword\");\r",
+					"    var keycloakRealm = pm.collectionVariables.get(\"keycloakRealm\");\r",
+					"\r",
+					"    pm.sendRequest({\r",
+					"        url: keycloakUrl + \"/realms/\" + keycloakRealm + \"/protocol/openid-connect/token\",\r",
+					"        method: \"POST\",\r",
+					"        headers: {\"Content-Type\": \"application/x-www-form-urlencoded\"},\r",
+					"        body: {\r",
+					"            mode: \"urlencoded\",\r",
+					"            urlencoded : [\r",
+					"                { key: \"scope\", value: \"openid\" },\r",
+					"                { key: \"client_id\", value: clientId },\r",
+					"                { key: \"grant_type\", value: \"password\" },\r",
+					"                { key: \"username\", value: keycloakUsername },\r",
+					"                { key: \"password\", value: keycloakPassword },\r",
+					"                { key: \"client_secret\", value: clientSecret },\r",
+					"            ]\r",
+					"        }}, function (err, response) {\r",
+					"            pm.collectionVariables.set(\"acessToken\", response.json().access_token);\r",
+					"        }\r",
+					"    );\r",
+					"}\r",
+					"\r",
+					"main();"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "clientId",
+			"value": "card-client",
+			"type": "string"
+		},
+		{
+			"key": "clientSecret",
+			"value": "card-secret",
+			"type": "string"
+		},
+		{
+			"key": "acessToken",
+			"value": ""
+		},
+		{
+			"key": "keycloakRealm",
+			"value": "hyperativa-realm",
+			"type": "string"
+		},
+		{
+			"key": "acesaaaasToken",
+			"value": ""
+		}
+	]
+}
