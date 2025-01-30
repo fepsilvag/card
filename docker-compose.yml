@@ -1,17 +1,16 @@
-version: '3.8'
-
 services:
-  postgres:
-    image: postgres:latest
-    container_name: card_postgres
+  mysql:
+    image: mysql:latest
+    container_name: card_mysql
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: CARDDB
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: CARDDB
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
 
   keycloak:
     image: quay.io/keycloak/keycloak:latest
@@ -31,7 +30,7 @@ services:
       - keycloak-network
 
 volumes:
-  postgres_data:
+  mysql_data:
 
 networks:
   keycloak-network:
