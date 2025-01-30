@@ -47,15 +47,10 @@ public class CardController implements CardsApi {
     @Override
     public ResponseEntity<UploadCards200ResponseRepresentation> uploadCards(MultipartFile file) {
         log.info("Received request to upload cards: {}", file.getOriginalFilename());
+        uploadCardPort.execute(file);
 
-        try {
-            uploadCardPort.execute(file);
-            log.info("Returning response of uploaded cards");
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (DataIntegrityViolationException e) {
-            log.warn("Card number already in use: {}", file.getOriginalFilename());
-            throw new CardNumberDuplicatedException();
-        }
+        log.info("Returning response of uploaded cards");
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Override

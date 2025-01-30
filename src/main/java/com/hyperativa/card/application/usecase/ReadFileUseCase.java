@@ -24,7 +24,7 @@ public class ReadFileUseCase implements ReadFilePort {
 
     @Override
     @Transactional
-    public List<String[]> execute(MultipartFile file) {
+    public List<String> execute(MultipartFile file) {
         log.info("Starting file processing: {}", file.getOriginalFilename());
 
         try (
@@ -32,7 +32,7 @@ public class ReadFileUseCase implements ReadFilePort {
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader)
         ) {
-            List<String[]> lines = getLines(bufferedReader);
+            List<String> lines = getLines(bufferedReader);
             log.info("File processing completed: {}", file.getOriginalFilename());
             return lines;
         } catch (Exception e) {
@@ -41,10 +41,9 @@ public class ReadFileUseCase implements ReadFilePort {
         }
     }
 
-    private List<String[]> getLines(BufferedReader bufferedReader) {
+    private List<String> getLines(BufferedReader bufferedReader) {
         return bufferedReader.lines()
                 .limit(fileReaderProperty.getBatchSize())
-                .map(line -> line.split(fileReaderProperty.getDelimiterCharacter()))
                 .toList();
     }
 
