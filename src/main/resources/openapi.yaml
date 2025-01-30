@@ -142,6 +142,60 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /cards/upload:
+    post:
+      summary: Upload de arquivo TXT com números de cartão
+      description: Endpoint para enviar um arquivo TXT contendo números de cartão para cadastro em lote.
+      operationId: uploadCards
+      tags:
+        - Cartões
+      security:
+        - OAuth2:
+            - write
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Arquivo TXT contendo números de cartão (um por linha)
+      responses:
+        '200':
+          description: Arquivo processado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Arquivo processado com sucesso"
+                  totalCardsProcessed:
+                    type: integer
+                    example: 10
+        '400':
+          description: Arquivo inválido ou vazio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Erro interno ao processar o arquivo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
 components:
   schemas:
     CardRequest:
